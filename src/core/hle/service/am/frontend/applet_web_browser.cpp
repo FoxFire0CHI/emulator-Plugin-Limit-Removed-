@@ -27,6 +27,15 @@
 #include "core/hle/service/ns/platform_service_manager.h"
 #include "core/loader/loader.h"
 
+// [UNITY-FIX] winbase.h A/W macros shadow C++ method names.
+#undef DeleteFile
+#undef CreateFile
+#undef CopyFile
+#undef MoveFile
+#undef MoveFileEx
+#undef CreateDirectory
+#undef RemoveDirectory
+
 namespace Service::AM::Frontend {
 
 namespace {
@@ -257,12 +266,6 @@ void WebBrowser::Initialize() {
     LOG_DEBUG(Service_AM, "WebArgHeader: total_tlv_entries={}, shim_kind={}",
               web_arg_header.total_tlv_entries, web_arg_header.shim_kind);
 
-    if (Settings::values.disable_web_applet &&
-        web_arg_header.shim_kind != ShimKind::Web &&
-        web_arg_header.shim_kind != ShimKind::Lhub) {
-        return;
-    }
-
     ExtractSharedFonts(system);
 
     switch (web_arg_header.shim_kind) {
@@ -312,13 +315,6 @@ void WebBrowser::Execute() {
 
     if (web_arg_header.shim_kind == ShimKind::Lhub) {
         ExecuteLhub();
-        return;
-    }
-
-    if (Settings::values.disable_web_applet) {
-        LOG_WARNING(Service_AM, "(STUBBED) called, Web Browser Applet is disabled. shim_kind={}",
-                    web_arg_header.shim_kind);
-        WebBrowserExit(WebExitReason::EndButtonPressed);
         return;
     }
 
