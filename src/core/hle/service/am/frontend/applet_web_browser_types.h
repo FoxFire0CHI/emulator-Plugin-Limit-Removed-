@@ -4,7 +4,7 @@
 #pragma once
 
 #include <array>
-#include <unordered_map>
+#include <ankerl/unordered_dense.h>
 #include <vector>
 
 #include "common/common_funcs.h"
@@ -30,7 +30,7 @@ enum class ShimKind : u32 {
     Web = 5,
     Wifi = 6,
     Lobby = 7,
-    Unknown8 = 8,
+    Lhub = 8,
 };
 
 enum class WebExitReason : u32 {
@@ -173,6 +173,6 @@ struct WebCommonReturnValue {
 };
 static_assert(sizeof(WebCommonReturnValue) == 0x1010, "WebCommonReturnValue has incorrect size.");
 
-using WebArgInputTLVMap = std::unordered_map<WebArgInputTLVType, std::vector<u8>>;
+using WebArgInputTLVMap = ankerl::unordered_dense::map<WebArgInputTLVType, std::vector<u8>>;
 
 } // namespace Service::AM::Frontend
