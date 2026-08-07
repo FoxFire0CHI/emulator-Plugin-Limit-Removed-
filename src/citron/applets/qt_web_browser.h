@@ -14,7 +14,7 @@
 
 #include "core/frontend/applets/web_browser.h"
 
-class GMainWindow;
+class MainWindow;
 class InputInterpreter;
 class UrlRequestInterceptor;
 
@@ -108,11 +108,11 @@ protected:
 
 private:
     /**
-     * Handles button presses to execute functions assigned in citron_key_callbacks.
-     * citron_key_callbacks contains specialized functions for the buttons in the window footer
+     * Handles button presses to execute functions assigned in yuzu_key_callbacks.
+     * yuzu_key_callbacks contains specialized functions for the buttons in the window footer
      * that can be overridden by games to achieve desired functionality.
      *
-     * @tparam HIDButton The list of buttons contained in citron_key_callbacks
+     * @tparam HIDButton The list of buttons contained in yuzu_key_callbacks
      */
     template <Core::HID::NpadButton... T>
     void HandleWindowFooterButtonPressedOnce();
@@ -155,9 +155,6 @@ private:
     void StartInputThread();
     void StopInputThread();
 
-    /// The thread where input is being polled and processed.
-    void InputThread();
-
     /// Loads the extracted fonts using JavaScript.
     void LoadExtractedFonts();
 
@@ -165,24 +162,14 @@ private:
     void FocusFirstLinkElement();
 
     InputCommon::InputSubsystem* input_subsystem;
-
     std::unique_ptr<UrlRequestInterceptor> url_interceptor;
-
     std::unique_ptr<InputInterpreter> input_interpreter;
-
-    std::thread input_thread;
-
-    std::atomic<bool> input_thread_running{};
-
+    std::jthread input_thread;
     std::atomic<bool> finished{};
-
     Service::AM::Frontend::WebExitReason exit_reason{
         Service::AM::Frontend::WebExitReason::EndButtonPressed};
-
     std::string last_url{"http://localhost/"};
-
     bool is_local{};
-
     QWebEngineProfile* default_profile;
     QWebEngineSettings* global_settings;
 };
@@ -193,7 +180,7 @@ class QtWebBrowser final : public QObject, public Core::Frontend::WebBrowserAppl
     Q_OBJECT
 
 public:
-    explicit QtWebBrowser(GMainWindow& parent);
+    explicit QtWebBrowser(MainWindow& parent);
     ~QtWebBrowser() override;
 
     void Close() const override;
